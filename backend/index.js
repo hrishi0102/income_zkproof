@@ -30,13 +30,21 @@ app.post("/generate-proof", async (req, res) => {
 app.post("/verify-proof", async (req, res) => {
   const { proof, publicSignals } = req.body;
 
+  // Check to see when proof becomes invalid
+  //   if (publicSignals[0] === "1") {
+  //     publicSignals[0] = "0";
+  //   }
+
   // Verify the proof
   const isValid = await groth16.verify(vkey, publicSignals, proof);
 
+  // Check if the income is above the threshold
   const isAboveThreshold = publicSignals[0] === "1";
 
-  // Only return true if the proof is valid AND the public signal is "1"
+  // Only return true if public signal is "1"
   res.json({ isValid: isValid && isAboveThreshold });
+
+  res.json({ isValid });
 });
 
 app.listen(PORT, () => {
